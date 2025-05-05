@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Adoption - Pet Adoption</title>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body class="adoption-bg">
+    <header>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="animals.html">Animals</a>
+            <a href="adopt.html">Adopt</a>
+            <a href="rescue.html">Rescue Stories</a>
+            <a href="contact.html">Contact</a>
+            <a href="about.html">About Us</a>
+        </nav>
+    </header>
+    <section class="container">
+        <h2>Adoption Form</h2>
+        <form id="adoptionForm">
+            <input type="text" id="fullName" placeholder="Full Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="tel" id="phoneNumber" placeholder="Phone Number" required pattern="[0-9]{10}">
+            <select id="petSelect" required>
+                <option value="">Select Pet</option>
+                <!-- This will be populated dynamically -->
+            </select>
+            <textarea id="reason" placeholder="Why would you like to adopt this pet?" required></textarea>
+            <button type="submit" class="btn">Submit Application</button>
+        </form>
+    </section>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+                const response = await fetch('http://localhost:3000/api/animals');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const animals = await response.json();
+                console.log('Fetched animals:', animals);
+
+                const petSelect = document.getElementById('petSelect');
+                petSelect.innerHTML = '<option value="">Select Pet</option>';
+
+                animals.forEach(animal => {
+                    const option = document.createElement('option');
+                    option.value = animal.animal_id;
+                    option.textContent = `${animal.name} (${animal.species})`;
+                    petSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading animals:', error);
+                alert('Error loading available pets. Please refresh the page.');
+            }
+        });
+
+        document.getElementById('adoptionForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            console.log('Form submitted');
+
+            try {
+                // Get form data
+                const formData = {
+                    name: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phoneNumber').value,
+                    animal_id: document.getElementById('petSelect').value,
+                    reason: document.getElementById('reason').value
+                };
+
+                console.log('Form data:', formData);
+
+                // Create user
+                const createUserResponse = await fetch('http://localhost:3000/api/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: formData.name,
+                        email: formData.email,
+                        phone: formData.phone
+                    })
+                });
+
+                if (!createUserResponse.ok) {
+                    throw new Error(`HTTP error! status: ${createUserResponse.status}`);
+                }
+
+                const user = await createUserResponse.json();
+                const userId = user.user_id;
+
+                // Submit adoption application
+                const adoptionData = {
+                    user_id: userId,
+                    animal_id: formData.animal_id,
+                    shelter_id: 1, // Assuming a default shelter ID
+                    reason: formData.reason
+                };
+
+                const adoptionResponse = await fetch('http://localhost:3000/api/adopt/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(adoptionData)
+                });
+
+                if (!adoptionResponse.ok) {
+                    throw new Error(`HTTP error! status: ${adoptionResponse.status}`);
+                }
+
+                const result = await adoptionResponse.json();
+                alert('Application submitted successfully!');
+                document.getElementById('adoptionForm').reset();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error submitting application. Please try again later.');
+            }
+        });
+    </script>
+</body>
+</html>
