@@ -19,12 +19,42 @@
     </header>
     <section class="container">
         <h2>Contact Us</h2>
-        <form class="contact-form">
-            <input type="text" placeholder="Your Name" required>
-            <input type="email" placeholder="Your Email" required>
-            <textarea placeholder="Your Message" required></textarea>
+        <form class="contact-form" id="contactForm">
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Your Email" required>
+            <textarea id="message" placeholder="Your Message" required></textarea>
             <button type="submit" class="btn">Send Message</button>
         </form>
     </section>
+
+    <script>
+      document.getElementById('contactForm').addEventListener('submit', async function(event) {
+          event.preventDefault();
+
+          const name = document.getElementById('name').value;
+          const email = document.getElementById('email').value;
+          const message = document.getElementById('message').value;
+
+          try {
+              const response = await fetch('http://localhost:3000/api/contact', { // Update the URL here
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ name, email, message })
+              });
+
+              if (response.ok) {
+                  alert('Message sent successfully!');
+                  document.getElementById('contactForm').reset();
+              } else {
+                  alert('Failed to send message. Please try again.');
+              }
+          } catch (error) {
+              console.error('Error:', error);
+              alert('An error occurred. Please try again later.');
+          }
+      });
+  </script>
 </body>
 </html>

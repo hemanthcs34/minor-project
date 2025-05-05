@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 // Import routes
 const adoptRoutes = require('./routes/adoptRoutes');
 const animalRoutes = require('./routes/animalRoutes');
+const userRoutes = require('./routes/userRoutes');
+const contactRoutes = require('./routes/contactRoutes'); // Import contact routes
 
 // Initialize
 dotenv.config();
@@ -25,6 +27,8 @@ app.use((req, res, next) => {
 // Route Middleware
 app.use('/api/adopt', adoptRoutes);
 app.use('/api/animals', animalRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/contact', contactRoutes); // Register contact routes
 
 // Error handling middleware
 app.use((err, req, res, next) => {
