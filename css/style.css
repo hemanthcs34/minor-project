@@ -48,8 +48,12 @@ body {
 /* Navigation */
 header {
   background-color: rgba(0, 0, 0, 0.8);
-  padding: 1rem 0;
+  display: flex;
+  justify-content: space-between; /* Pushes nav to left, contact to right */
+  align-items: center; /* Vertically align items */
+  padding: 10px 20px;
 }
+
 nav {
   display: flex;
   justify-content: center;
@@ -57,6 +61,7 @@ nav {
   max-width: 1200px;
   margin: 0 auto;
 }
+
 nav a {
   color: #fff;
   text-decoration: none;
@@ -65,8 +70,34 @@ nav a {
   border-radius: 5px;
   transition: background-color 0.3s;
 }
+
 nav a:hover {
   background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Contact Info in Header */
+header .contact-info {
+  display: flex; /* Use flexbox for horizontal layout */
+  align-items: center; /* Vertically align items */
+  gap: 15px; /* Space between phone and email sections */
+}
+
+header .contact-info p {
+  margin: 0;
+  display: flex;
+  align-items: center; /* Vertically align icon and text */
+  gap: 5px; /* Space between icon and text */
+  color: #fff; /* White text color */
+}
+
+header .contact-info a {
+  text-decoration: none;
+  color: #fff; /* White text color */
+}
+
+header .contact-info i {
+  font-size: 16px; /* Adjust icon size */
+  color: #fff; /* White icon color */
 }
 
 /* Buttons */
